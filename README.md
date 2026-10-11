@@ -21,21 +21,25 @@ Testler platform çarpışması, zıplama, momentum, duvarlar, kamera, platform 
 
 ## Yeni mekanikler
 
-- **Roket (↑):** 1,6 saniye otomatik yükseliş; geçilen katlar da puan kazandırır.
+- **Roket (↑):** 0,65 saniye sınırlı yükseliş; bitince hız yumuşatılır. Geçilen katlar da puan kazandırır. Yeni roket için platforma iniş ve 5 saniyelik bekleme gerekir. Boost uçuşu ve kalkan kurtarması sırasında diğer güçlendirmeler toplanamaz.
 - **Süper zıplama (↟):** 8 saniye boyunca %30 daha güçlü zıplama.
 - **Zaman freni (◷):** 6 saniye boyunca otomatik kamera baskısını %75 azaltır.
 - **Kurtarma kalkanı (◇):** Bir düşüşte oyuncuyu roketle tekrar kuleye taşır.
-- Her 20 katlık bölgede 6. katta roket, 9. katta süper zıplama, 15. katta zaman freni ve 19. katta kalkan çıkar. Toplamak 250 bonus puan verir.
+- İlk güçlendirme 6–10. kat arasında çıkar; sonraki güçlendirmeler 14–22 kat aralıklarla, rastgele türde ve sağlam platformlarda üretilir. Toplamak 250 bonus puan verir.
 - Turuncu platformlar inişten 0,65 saniye sonra kırılır; mor platformlar oyuncuyu taşıyarak yatay hareket eder.
 - Her 20 katta hareket ve kamera temposu yükselir. Zıplama yüksekliği korunur; hareket temposu 1,65 katla sınırlıdır.
 - 3 saniye içinde yeni katlara ardışık inişler kombo verir; kat atlayarak iniş ekstra puan kazandırır.
 
 Sonraki sürüm fikirleri: günlük sabit tohumlu kule, hayalet rekor koşusu, karakter kostümleri ve görevlerle açılan kule temaları.
 
-## Bölge ve rota tasarımı
+## Sonsuz rastgele seviye tasarımı
 
-Kule 20 katlık dört bölgeden oluşur: Buz Avlusu, Kristal Galeri, Saat Kulesi ve Fırtına Zirvesi. Bölgeler farklı renkler ve arka plan motifleri taşır; 80 kattan sonra döngü devam eder. Her bölgede geniş başlangıç basamakları, zikzak rotalar, kırılgan köprüler ve hareketli geçişler bulunur. Ardışık bölgeler rotayı aynalar; küçük rastgele sapmalar tekrar oynanabilirlik sağlar.
+Platformlar sabit bir rota dizisini tekrar etmez. Her yeni platformun konumu, genişliği, aralığı ve türü önceki platformdan türetilir. Görsel temalar 20 katta bir değişmeye devam eder: Buz Avlusu, Kristal Galeri, Saat Kulesi ve Fırtına Zirvesi.
 
-Kat aralıkları 64–86 piksel arasında değişir. Platform genişliği giderek azalır, en dar platform 110 pikseldir. Her 20. kat 360 piksel genişliğinde güvenli bir mola katıdır: ilk inişte 300 bonus puan ve 3 saniye otomatik kamera molası verir. Bu katlar yeniden doğma noktası değildir; düşerek kaybetme kuralı sürer. Güçlendirmeler zorlu geçişlerin öncesindeki sağlam platformlarda bulunur.
+- Kat aralıkları 64–82 piksel, normal platform genişlikleri 120–185 piksel arasındadır. İlk dört kat daha geniş ve yakın platformlarla başlar.
+- Platform merkezleri önceki merkezden en fazla 50 piksel uzaklaşır. Hareketli platformların iki yöndeki 24 piksellik hareketi için de pay bırakılır.
+- Kırılan veya hareketli bir platformun ardından mutlaka sağlam ya da mola platformu gelir. Güçlendirmeler tehlikeli platformlara yerleştirilmez.
+- Mola katları 18–24 katlık rastgele aralıklarla oluşur: 360 piksel genişlik, ilk inişte 300 bonus puan ve 3 saniyelik otomatik kamera molası. Yeniden doğma noktası değildir.
+- Otomatik kamera baskısı 90 piksel/saniye ile sınırlıdır; yüksek katlarda sınırsız hızlanarak oyunu imkansız hale getirmez.
 
-`levels.js` rota, bölge ve ödül tasarımını içerir. Testler 240 katın geometrisini, 120 ardışık geçişin güçlendirmesiz gerçek fizikle erişilebilirliğini, mola katlarını ve değişken kat aralıklarında roket ilerlemesini doğrular.
+`levels.js` üretim kurallarını içerir. Testler farklı rastgele dizilerde platform sınırlarını, farklı hareket zamanlarında toplam 1.200 geçişin güçlendirmesiz gerçek fizikle erişilebilirliğini, mola katlarını ve boost zincirinin engellenmesini doğrular. Erişilebilirlik testleri her geçişi ayrı sınar; oyuncunun her koşuyu tamamlayacağını garanti etmez.
