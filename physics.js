@@ -1,3 +1,4 @@
+import { createPlatform, zoneForFloor } from './levels.js';
 export const WIDTH = 480, HEIGHT = 640;
 export const POWERUPS = {
   rocket: { label: 'ROKET', color: '#ffad66', symbol: '↑', duration: 1.6 },
@@ -5,17 +6,10 @@ export const POWERUPS = {
   slow: { label: 'ZAMAN FRENİ', color: '#78dafa', symbol: '◷', duration: 6 },
   shield: { label: 'KURTARMA KALKANI', color: '#9ae9d6', symbol: '◇', duration: 0 },
 };
-function platform(g, floor, y) {
-  const w = Math.max(95, 140 - floor * .3);
-  const x = 30 + g.random() * (WIDTH - 60 - w);
-  const kind = floor >= 6 && floor % 5 === 0 ? 'breakable' : floor >= 12 && floor % 7 === 0 ? 'moving' : 'normal';
-  const item = floor > 0 && floor % 6 === 0 ? Object.keys(POWERUPS)[(floor / 6 - 1) % 4] : null;
-  return { x, baseX: x, y, w, floor, kind, crumble: null, broken: false, item };
-}
 export function createGame(random = Math.random) {
-  const g = { player: { x: 235, y: 560, vx: 0, vy: 0, grounded: true }, platforms: [], camera: 0, floor: 0, score: 0, bonus: 0, time: 0, dead: false, random, effects: { rocket: 0, spring: 0, slow: 0 }, shield: false, combo: 0, comboTime: 0, level: 1, pace: 1, notice: '', noticeTime: 0 };
+  const g = { player: { x: 235, y: 560, vx: 0, vy: 0, grounded: true }, platforms: [], camera: 0, floor: 0, score: 0, bonus: 0, time: 0, dead: false, random, effects: { rocket: 0, spring: 0, slow: 0 }, shield: false, combo: 0, comboTime: 0, level: 1, pace: 1, notice: '', noticeTime: 0, restTime: 0, zoneIndex: 0 };
   g.platforms.push({ x: 30, baseX: 30, y: 590, w: 420, floor: 0, kind: 'normal', crumble: null });
-  for (let i = 1; i < 18; i++) g.platforms.push(platform(g, i, 590 - i * 75));
+  for (let i = 1; i < 18; i++) g.platforms.push(createPlatform(i, g.platforms.at(-1), g.random));
   return g;
 }
 function announce(g, text) { g.notice = text; g.noticeTime = 2; }
@@ -33,6 +27,7 @@ export function step(g, input, dt) {
   dt = Math.min(dt, 1 / 30);
   const p = g.player;
   g.time += dt;
+  g.restTime = Math.max(0, g.restTime - dt);
   g.noticeTime = Math.max(0, g.noticeTime - dt);
   g.comboTime = Math.max(0, g.comboTime - dt);
   if (g.comboTime === 0) g.combo = 0;
@@ -56,7 +51,7 @@ export function step(g, input, dt) {
     }
     if (plat.kind === 'moving') {
       const previous = plat.x;
-      plat.x = Math.max(25, Math.min(WIDTH - 25 - plat.w, plat.baseX + Math.sin(g.time * 1.5 + plat.floor) * 45));
+      plat.x = Math.max(25, Math.min(WIDTH - 25 - plat.w, plat.baseX + Math.sin(g.time * 1.5 + plat.floor) * 24));
       if (p.grounded && Math.abs(p.y + 30 - plat.y) < 1 && p.x + 24 > previous && p.x < previous + plat.w) p.x += plat.x - previous;
     }
   }
@@ -70,6 +65,10 @@ export function step(g, input, dt) {
   if (p.vy >= 0) for (const plat of g.platforms) {
     if (!plat.broken && oldBottom <= plat.y + .5 && p.y + 30 >= plat.y && p.x + 24 > plat.x && p.x < plat.x + plat.w) {
       p.y = plat.y - 30; p.vy = 0; p.grounded = true;
+      if (plat.kind === 'rest' && !plat.restClaimed) {
+        plat.restClaimed = true; g.restTime = 3; g.bonus += 300;
+        announce(g, 'MOLA KATI · 3 SANİYE MOLA +300');
+      }
       if (plat.kind === 'breakable' && plat.crumble === null) plat.crumble = .65;
       if (plat.floor > g.floor) {
         const skipped = plat.floor - g.floor;
@@ -88,13 +87,19 @@ export function step(g, input, dt) {
     }
   }
   // Rocket progress counts even when flying past platforms.
-  if (g.effects.rocket > 0) g.floor = Math.max(g.floor, Math.floor((590 - p.y - 30) / 75));
+  if (g.effects.rocket > 0) for (const plat of g.platforms) {
+    if (p.y + 30 <= plat.y) g.floor = Math.max(g.floor, plat.floor);
+  }
+  const zoneIndex = Math.floor(g.floor / 20);
+  if (zoneIndex !== g.zoneIndex) {
+    g.zoneIndex = zoneIndex; announce(g, zoneForFloor(g.floor).name);
+  }
   g.score = g.floor * 100 + g.bonus;
   g.camera = Math.min(g.camera, p.y - 290);
-  if (g.time > 6) g.camera -= (12 + Math.min(55, g.time * .5) + (g.level - 1) * 8) * (g.effects.slow > 0 ? .25 : 1) * dt;
+  if (g.time > 6 && g.restTime === 0) g.camera -= (12 + Math.min(55, g.time * .5) + (g.level - 1) * 8) * (g.effects.slow > 0 ? .25 : 1) * dt;
   while (g.platforms.at(-1).y > g.camera - 200) {
     const last = g.platforms.at(-1);
-    g.platforms.push(platform(g, last.floor + 1, last.y - 75));
+    g.platforms.push(createPlatform(last.floor + 1, last, g.random));
   }
   if (p.y - g.camera > HEIGHT + 20) {
     if (g.shield) {
