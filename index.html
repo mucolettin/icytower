@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="tr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Icy Tower — Gökyüzüne tırman</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><a class="brand" href="./">❄ ICY TOWER</a><span class="badge">ARCADE / 01</span><button id="sound" aria-label="Sesi aç">SES: KAPALI</button></header>
+<main>
+<section class="intro"><span class="eyebrow">BİR KAT DAHA.</span><h1>Yukarı.<br>Daha <em>yukarı.</em></h1><p>Ritmini bul, hızını al ve bulutları geride bırak. Tek sınır, bir sonraki platform.</p><div class="record"><span>KİŞİSEL REKOR</span><strong id="best">000</strong><small>KAT</small></div><div class="instructions"><h2>NASIL OYNANIR?</h2><p><kbd>←</kbd> <kbd>→</kbd> veya <kbd>A</kbd> <kbd>D</kbd> <span>Hareket et</span></p><p><kbd>SPACE</kbd> <span>Zıpla · Hızlandıkça daha yükseğe</span></p><p><kbd>P</kbd> <span>Duraklat / devam et</span></p></div></section>
+<section class="game-shell" aria-label="Oyun alanı"><div class="game-top"><span><i></i> SONSUZ TIRMANIŞ</span><button id="pause" aria-label="Duraklat">Ⅱ</button></div><div class="stage"><canvas id="game" width="480" height="640" aria-label="Icy Tower platform oyunu"></canvas><div class="hud"><div><small>KAT</small><strong id="floor">000</strong></div><div><small>SKOR</small><strong id="score">0</strong></div></div><div id="overlay" class="overlay"><span class="snow">❄</span><h2 id="title">Zirve seni bekliyor.</h2><p id="message">Bir nefes al. İlk adımını at.</p><button id="start">TIRMANMAYA BAŞLA <span>↗</span></button><small>SPACE ile de başlayabilirsin</small></div></div><div class="game-bottom"><span>YÜKSEL. DÜŞ. TEKRAR DENE.</span><span id="status">HAZIR</span></div><div class="touch"><button data-key="ArrowLeft" aria-label="Sola git">←</button><button data-key="Space">ZIPLA</button><button data-key="ArrowRight" aria-label="Sağa git">→</button></div></section>
+<aside><span class="vertical">THE ONLY WAY IS UP ↑</span></aside>
+</main><footer><span>Küçük adımlar. Büyük yükseklikler.</span><span>ÖZGÜN TARAYICI OYUNU · 2026</span></footer><script type="module" src="game.js"></script>
+</body></html>
