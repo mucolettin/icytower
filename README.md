@@ -18,3 +18,16 @@ npm test
 ```
 
 Testler platform çarpışması, zıplama, momentum, duvarlar, kamera, platform üretimi ve düşerek kaybetmeyi doğrular.
+
+## Yeni mekanikler
+
+- **Roket (↑):** 1,6 saniye otomatik yükseliş; geçilen katlar da puan kazandırır.
+- **Süper zıplama (↟):** 8 saniye boyunca %30 daha güçlü zıplama.
+- **Zaman freni (◷):** 6 saniye boyunca otomatik kamera baskısını %75 azaltır.
+- **Kurtarma kalkanı (◇):** Bir düşüşte oyuncuyu roketle tekrar kuleye taşır.
+- Her 6 katta bir güçlendirme çıkar; türler sırayla gelir. Toplamak 250 bonus puan verir.
+- Turuncu platformlar inişten 0,65 saniye sonra kırılır; mor platformlar oyuncuyu taşıyarak yatay hareket eder.
+- Her 20 katta hareket ve kamera temposu yükselir. Zıplama yüksekliği korunur; hareket temposu 1,65 katla sınırlıdır.
+- 3 saniye içinde yeni katlara ardışık inişler kombo verir; kat atlayarak iniş ekstra puan kazandırır.
+
+Sonraki sürüm fikirleri: günlük sabit tohumlu kule, hayalet rekor koşusu, karakter kostümleri ve görevlerle açılan kule temaları.
